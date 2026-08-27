@@ -1,0 +1,6 @@
+# Raw API responses and per-flight records are NOT redistributable.
+# See the licensing note in README.md.
+route_study_raw/
+route_study.json
+*.key
+__pycache__/
