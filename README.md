@@ -8,6 +8,10 @@ Short answer: **the error is overwhelmingly regional, not stale.** adsbdb is
 barely matters — Australian routes verify at 100% on database rows with a
 median age of 11.5 years.
 
+**Update 2026-09-05: the US figure has been replicated at thirteen times the
+sample size — 28.6% on 395 flights, by an independent method.** See
+[Replication](#replication-us-286-on-395-flights) below.
+
 ---
 
 **How accurate are free callsign→route lookups, and where do they fail?**
@@ -66,6 +70,81 @@ reused across regional operators, every database is wrong at any age. The US
 failures are heavy with regional carriers flying under mainline codes
 (SkyWest, Endeavor, Envoy, Republic) plus mainline domestic.
 
+## Replication: US 28.6% on 395 flights
+
+The original US cell was **n=30**, sampled on a single day. It has since been
+re-measured against a larger sample by a different method, and the result holds.
+
+| | Original | Replication |
+|---|---|---|
+| date | 2026-08-27 | 2026-09-05 |
+| n (US) | 30 | **395** |
+| ground truth | aviationstack | filed FAA flight plans |
+| **adsbdb correct** | **27%** | **28.6%** |
+
+Full breakdown of the replication:
+
+| | n | share |
+|---|---|---|
+| adsbdb returned a route | 395 | **98.8%** |
+| exact match | 113 | **28.6%** |
+| both ends wrong | 241 | **61.0%** |
+| one end right | 35 | 8.9% |
+| reversed (origin/destination swapped) | 6 | 1.5% |
+
+**The pattern is high coverage and low accuracy.** adsbdb answers almost every
+callsign and is wrong about two thirds of them, and the failures are not near
+misses. `SWA938` returns `KMDW-KBOS` where the flight plan says `KBWI-KDEN`.
+`DAL2768` returns `KOAK-KSLC` against `KSEA-PANC`. Those are different flights,
+not stale variants of the same one.
+
+By operation type:
+
+| Category | n | correct |
+|---|---|---|
+| Commercial | 364 | 29.1% |
+| **On-demand / air taxi** | 25 | **8.0%** |
+| Cargo | 6 | 83.3% ⚠ n=6 |
+
+On-demand charter is the worst-served category by a wide margin — those
+callsigns are not published schedules and no curated database has them.
+
+### Method
+
+Flight plans filed with the FAA are available free through the
+[SWIM Cloud Distribution Service](https://www.faa.gov/air_traffic/technology/swim),
+which publishes the TFMS R14 Flight Data feed. Each message carries the
+departure and arrival airport and, on most, the filed lateral trajectory.
+
+1. Collect flight plans continuously and aggregate by callsign.
+2. Keep only routes whose **filed trajectory corroborates the filed endpoints**
+   — first and last trajectory point each within 25 km of the stated airports.
+3. Query adsbdb for the same callsign and compare.
+
+Step 2 is the arbiter. Measured across 4,000 routes, the filed trajectory
+agrees with the filed endpoints **99.88%** of the time, which is what makes it
+usable as a check.
+
+### ⚠ What this does not establish
+
+**The trajectory is not independent ground truth.** It establishes that the
+flight plan is internally consistent — the filed path agrees with the filed
+endpoints. It cannot detect a plan filed correctly and then flown somewhere
+else, and where no flight plan exists adsbdb cannot be judged at all. That is
+weaker evidence than the aviationstack verification used in the original study,
+and it is why this is presented as a replication of one cell rather than a
+replacement for the whole table.
+
+**It is a US number.** The FAA feed covers US airspace, so this sample is US-
+heavy by construction. 28.6% is comparable to the **27% US** figure above, and
+**not** to the 79% measured everywhere else. Quoting it as a global accuracy
+rate would misrepresent both measurements.
+
+**Four routes were excluded.** All four Cathay Pacific flights through Hong
+Kong showed an identical 29 km offset between the trajectory endpoint and the
+airport — a systematic error in one airport record rather than four bad routes,
+but it would distort the arbiter.
+
 ## Three distinct failure modes
 
 1. **Records exist and are wrong** — the US. No source-switching helps; both
@@ -97,11 +176,19 @@ against any location.
 
 ## Limitations, stated plainly
 
-* **One day.** All sampling on 2026-08-27.
-* **One ground-truth source** (aviationstack). Its own coverage may vary by
-  region; that confound cannot be ruled out. A check confirmed mismatches were
-  against *every* leg a flight number flew that day, not just the chosen one.
-* **Small cells.** n=30 for the US, n=5–6 for several regions.
+* **One day** for the regional table — all sampling on 2026-08-27. The US
+  replication was sampled separately on 2026-09-05.
+* **One ground-truth source** for the regional table (aviationstack). Its own
+  coverage may vary by region; that confound cannot be ruled out. A check
+  confirmed mismatches were against *every* leg a flight number flew that day,
+  not just the chosen one. The replication used a **different** source — filed
+  FAA flight plans — which is why it is evidence rather than repetition.
+* **Small cells.** n=5–6 for several regions. ⚠ The US cell was n=30 and is
+  now separately supported at n=395; **the non-US cells have not been
+  replicated and remain small.** The 79% figure rests on 52 flights.
+* ⚠ **The two measurements are not the same test.** aviationstack verifies
+  against what was *flown*; the replication verifies against what was *filed*.
+  They agree here, which is informative, but they are not interchangeable.
 * **A rate is not a quality score.** Discard rates below are counts, not
   verdicts on whether discarding was right.
 * **Per-flight records are not published — see below.** Nobody can check the
@@ -120,10 +207,19 @@ responses and per-flight rows.
 
 ## Reproducing
 
+The regional table:
+
 ```
 python study_collect.py  <lat> <lon> <radius_nm> <max>   # free
 python study_verify.py   --spend N                        # uses your quota
 python study_crosstab.py                                  # free
+```
+
+The US replication, which spends no quota but needs your own FAA SWIM
+subscription and a route table built from it:
+
+```
+python compare_against_filed_plans.py --db routes.db --airports airports.csv
 ```
 
 `study_verify.py` needs an aviationstack access key. It refuses to run without
