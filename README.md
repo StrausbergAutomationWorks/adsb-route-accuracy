@@ -119,15 +119,14 @@ callsigns are not published schedules and no curated database has them.
 
 ### Method
 
-Flight plans filed with the FAA are available free through the
-[SWIM Cloud Distribution Service](https://www.faa.gov/air_traffic/technology/swim),
-which publishes the TFMS R14 Flight Data feed. Each message carries the
-departure and arrival airport and, on most, the filed lateral trajectory.
+Filed flight plans carry the departure and arrival airport and, on most, 
+the filed lateral trajectory. (A word of warning: Subscribing to an FAA feed puts 
+them in control of what you can display. ADS-B and the other databases do not.)
 
-1. Collect flight plans continuously and aggregate by callsign.
-2. Keep only routes whose **filed trajectory corroborates the filed endpoints**
+1. We collected flight plans continuously and aggregated by callsign.
+2. We kept only routes whose **filed trajectory corroborates the filed endpoints**
    — first and last trajectory point each within 25 km of the stated airports.
-3. Query adsbdb for the same callsign and compare.
+3. We queried adsbdb for the same callsign and compared.
 
 Step 2 is the arbiter. Measured across 4,000 routes, the filed trajectory
 agrees with the filed endpoints **99.88%** of the time, which is what makes it
@@ -143,7 +142,7 @@ weaker evidence than the aviationstack verification used in the original study,
 and it is why this is presented as a replication of one cell rather than a
 replacement for the whole table.
 
-**It is a US number.** The FAA feed covers US airspace, so this sample is US-
+**It is a US number.** The FAA covers US airspace, so this sample is US-
 heavy by construction. 28.6% is comparable to the **27% US** figure above, and
 **not** to the 79% measured everywhere else. Quoting it as a global accuracy
 rate would misrepresent both measurements.
@@ -176,7 +175,7 @@ verified truth:
 | passed the check | 25 | **72%** |
 | rejected by the check | 18 | **11%** |
 
-Roughly seven to one separation. It discards a correct route about 11% of the
+Roughly seven-to-one separation. It discards a correct route about 11% of the
 time it fires — the price of turning a confident wrong answer into a blank.
 
 *Corrected 2026-09-07.* This table first read 8 / 22 at 75% and 9%. Those
@@ -264,8 +263,8 @@ python study_verify.py   --spend N                        # uses your quota
 python study_crosstab.py                                  # free
 ```
 
-The US replication, which spends no quota but needs your own FAA SWIM
-subscription and a route table built from it:
+The US replication, which spends no quota but needs your own FAA 
+subscription or a route table built from it:
 
 ```
 python compare_against_filed_plans.py --db routes.db --airports airports.csv
