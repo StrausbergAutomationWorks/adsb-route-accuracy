@@ -165,11 +165,21 @@ verified truth:
 
 | adsbdb answers | n | actually correct |
 |---|---|---|
-| passed the check | 8 | **75%** |
-| rejected by the check | 22 | **9%** |
+| passed the check | 25 | **72%** |
+| rejected by the check | 18 | **11%** |
 
-Roughly eight to one separation. It discards a correct route about 9% of the
+Roughly seven to one separation. It discards a correct route about 11% of the
 time it fires — the price of turning a confident wrong answer into a blank.
+
+*Corrected 2026-09-07.* This table first read 8 / 22 at 75% and 9%. Those
+figures came from a flag stored during collection, which was only computed for
+one 60-record cohort rather than for every verified row. Recomputing the check
+over all 43 verified rows that carry coordinates gives the numbers above. The
+separation and the conclusion are unchanged; the sample is larger and the
+population is now stated.
+
+Restricted to US flights alone, where the underlying route data is worst, the
+check separates 7 kept at 71% from 16 rejected at 12%.
 
 See [`route_audit.py`](route_audit.py), which is standalone and runnable
 against any location.
