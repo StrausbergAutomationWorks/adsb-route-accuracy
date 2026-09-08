@@ -2,5 +2,8 @@
 # See the licensing note in README.md.
 route_study_raw/
 route_study.json
+route_study_flat.csv
+route_study*
+item38_results.json
 *.key
 __pycache__/

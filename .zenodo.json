@@ -1,0 +1,32 @@
+{
+  "title": "adsbdb / hexdb.io route accuracy: measured",
+  "description": "<p>A measurement of how accurately free callsign-to-route lookup services resolve an aircraft's origin and destination, and of where that error actually lives.</p><p>The error is regional rather than a matter of database staleness. adsbdb is 27% correct on US domestic flights (95% CI 14-44%, n=30) and 79% correct across the other regions sampled (66-88%, n=52); the intervals do not overlap. Record age barely matters - Australian routes verified at 100% on database rows with a median age of 11.5 years. The US figure was independently replicated at 28.6% across 395 flights using filed FAA flight plans as the arbiter, an order of magnitude larger sample by a different method.</p><p>A geometric plausibility check is also measured: rejecting a route the aircraft's own position contradicts separates correct from incorrect answers roughly 8 to 1, validated on 395 flights it was not designed against.</p><p>Published here: the method, the scripts and aggregate statistics. Withheld: per-flight records, which would redistribute two restricted datasets.</p><p>Sampling is stratified rather than random, and several regional cells are small; both are stated in the README limitations.</p>",
+  "upload_type": "dataset",
+  "license": "mit",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Strausberg, Lee",
+      "orcid": "0009-0002-7131-144X"
+    }
+  ],
+  "keywords": [
+    "ADS-B",
+    "aviation",
+    "flight tracking",
+    "data quality",
+    "adsbdb",
+    "hexdb",
+    "FAA SWIM",
+    "TFMS",
+    "open data",
+    "measurement"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/StrausbergAutomationWorks/adsb-route-accuracy",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
