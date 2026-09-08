@@ -42,6 +42,12 @@ This is a measurement of *how* wrong, and of where the error actually lives.
 
 **US 27%. Everywhere else 79%.**
 
+With 95% intervals: US **14–44%** (n=30), everywhere else **66–88%** (n=52).
+They do not overlap, so the split is not sampling noise. ⚠ **The individual
+regional rows are a different matter** — four of the seven have n≤6, and
+Oceania's 100% carries an interval of 61–100%. Those rows show where the
+sample went, not what a region's true rate is.
+
 ## Why it is not age
 
 The obvious hypothesis is that old records go stale. hexdb exposes an
@@ -181,11 +187,42 @@ population is now stated.
 Restricted to US flights alone, where the underlying route data is worst, the
 check separates 7 kept at 71% from 16 rejected at 12%.
 
+### Tested on data it was never tuned against
+
+The figures above have an obvious weakness: the check was designed and scored
+on the same 82 flights. A rule evaluated on the data that shaped it flatters
+itself.
+
+So it was re-scored against the 395 replication flights, which it had never
+seen, using filed flight plans as the arbiter:
+
+| | passed the check | rejected | separation |
+|---|---|---|---|
+| designed-against, n=43 | 72% | 11% | 6.5 : 1 |
+| **unseen, n=395** | **59%** | **7%** | **8.4 : 1** |
+
+95% intervals on the unseen data are 51–66% and 4–11%, which do not approach
+each other. **The separation is not an artefact of tuning.**
+
+The absolute rates differ for two reasons worth stating. The arbiter is
+weaker — agreement with a filed plan rather than with a verified flight. And
+the aircraft position used is the midpoint of the filed trajectory, which is by
+construction far from both airports, so the rule that accepts anything within
+150 km of either end almost never fires. That biases the unseen test toward
+rejection: 58% of flights were rejected there against 42% in the original.
+
 See [`route_audit.py`](route_audit.py), which is standalone and runnable
 against any location.
 
 ## Limitations, stated plainly
 
+* ⚠ **The sample is stratified, not random.** Flights were drawn in cohorts
+  chosen to test specific ideas — a 30-flight random pull, then deliberate
+  cohorts for Canada, Sweden, Norway, Denmark, Oceania, Latin America, East and
+  Southeast Asia, plus `old_eu` and `young` cohorts selected on record age. So
+  **"79% everywhere else" is an average over regions that were picked, not an
+  estimate of global accuracy.** The US–non-US contrast is the finding; the
+  aggregate is not a population figure.
 * **One day** for the regional table — all sampling on 2026-08-27. The US
   replication was sampled separately on 2026-09-05.
 * **One ground-truth source** for the regional table (aviationstack). Its own
