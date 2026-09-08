@@ -119,9 +119,36 @@ callsigns are not published schedules and no curated database has them.
 
 ### Method
 
-Filed flight plans carry the departure and arrival airport and, on most, 
-the filed lateral trajectory. (A word of warning: Subscribing to an FAA feed puts 
-them in control of what you can display. ADS-B and the other databases do not.)
+Filed flight plans carry the departure and arrival airport and, on most, the
+filed lateral trajectory. They are available free through the
+[SWIM Cloud Distribution Service](https://www.faa.gov/air_traffic/technology/swim),
+which publishes the TFMS R14 Flight Data feed.
+
+> **A warning before you subscribe.** Free is not the same as unencumbered.
+> Taking an FAA feed means signing a data access agreement, and that agreement
+> governs what you may display and redistribute.
+>
+> The FAA's Limiting Aircraft Data Displayed programme lets an aircraft owner
+> ask to be excluded from displayed data. The list is republished weekly and
+> subscribers are expected to apply the current one, **including to data
+> already collected** — an aircraft that enrols on Tuesday has to disappear
+> from what you show, not merely from what you gather next. A public artifact
+> built from this feed therefore has to be rebuilt on that cadence rather than
+> when it suits you.
+>
+> How far that reaches is not something this repository can tell you. The
+> obligation plainly covers the FAA's own data. Whether it also reaches
+> aircraft you receive independently over ADS-B is a question about the terms
+> you sign, and one worth putting to the programme office rather than
+> inferring — the wording and the programme's stated scope do not obviously
+> agree. Assume the stricter reading until someone with authority tells you
+> otherwise.
+>
+> **None of this applies to ADS-B reception or to the other databases here.**
+> An aircraft's own broadcast is yours to receive, and adsbdb and hexdb impose
+> no such terms. If you only want route data, use them. Subscribe only if you
+> need what the filed plans give you, and read the agreement first — the
+> obligations attach to you, not to your code.
 
 1. We collected flight plans continuously and aggregated by callsign.
 2. We kept only routes whose **filed trajectory corroborates the filed endpoints**
@@ -142,7 +169,7 @@ weaker evidence than the aviationstack verification used in the original study,
 and it is why this is presented as a replication of one cell rather than a
 replacement for the whole table.
 
-**It is a US number.** The FAA covers US airspace, so this sample is US-
+**It is a US number.** The feed covers US airspace, so this sample is US-
 heavy by construction. 28.6% is comparable to the **27% US** figure above, and
 **not** to the 79% measured everywhere else. Quoting it as a global accuracy
 rate would misrepresent both measurements.
@@ -263,8 +290,9 @@ python study_verify.py   --spend N                        # uses your quota
 python study_crosstab.py                                  # free
 ```
 
-The US replication, which spends no quota but needs your own FAA 
-subscription or a route table built from it:
+The US replication, which spends no quota but needs your own SWIM/TFMS
+subscription and a route table built from it — see the warning above before
+you go and get one:
 
 ```
 python compare_against_filed_plans.py --db routes.db --airports airports.csv
