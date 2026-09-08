@@ -1,5 +1,7 @@
 # adsbdb / hexdb.io route accuracy — measured
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22652002.svg)](https://doi.org/10.5281/zenodo.22652002)
+
 *Why is adsbdb returning the wrong origin and destination? Why does hexdb.io
 have no route for my callsign? Is the route data stale?*
 
@@ -275,6 +277,21 @@ every response, because a verification spent is gone for the month.
 
 ⚠ **Point the collector at a nearby airport, not your own coordinates.** Your
 sampling centre ends up in your results.
+
+## Citing this
+
+⚠ **Cite the concept DOI**, which always resolves to the most recent version:
+
+```
+Strausberg, Lee. adsbdb / hexdb.io route accuracy: measured.
+Zenodo. https://doi.org/10.5281/zenodo.22652002
+```
+
+To cite this specific release rather than the latest, use
+[`10.5281/zenodo.22652003`](https://doi.org/10.5281/zenodo.22652003).
+
+A `CITATION.cff` is included, so GitHub's "Cite this repository" panel and most
+reference managers will read the metadata directly.
 
 ## Licence
 
